@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b2a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Golden Line" />
+  <title>THE GOLDEN LINE – Punkte</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='32' cy='26' r='30'%3E%3Cstop offset='0' stop-color='%23fff2bf'/%3E%3Cstop offset='0.55' stop-color='%23d0ad52'/%3E%3Cstop offset='1' stop-color='%2371571a'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect x='6' y='6' width='52' height='52' rx='12' fill='%230b2a1a'/%3E%3Cpath d='M18 40c10-18 18-20 28 0' fill='none' stroke='url(%23g)' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='24' r='8' fill='url(%23g)'/%3E%3C/svg%3E" />
+
+  <style>
+    :root{
+      --felt-1:#0b2a1a;
+      --felt-2:#0a2417;
+      --felt-3:#071c12;
+      --gold-1:#fff2bf;
+      --gold-2:#d0ad52;
+      --gold-3:#7b5b1b;
+      --ink:#eef5ef;
+      --muted:#b8c9be;
+      --danger:#ff5a5f;
+      --ok:#6ee7a8;
+
+      --r:18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --shadow2: 0 10px 30px rgba(0,0,0,.25);
+      --stroke: rgba(255,255,255,.08);
+
+      --pad2: 18px;
+      --maxw: 980px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 50% 0%, rgba(255,242,191,.12), transparent 55%),
+        radial-gradient(900px 500px at 20% 20%, rgba(110,231,168,.08), transparent 60%),
+        radial-gradient(900px 500px at 85% 30%, rgba(255,90,95,.05), transparent 60%),
+        linear-gradient(180deg, var(--felt-1), var(--felt-2) 55%, var(--felt-3));
+      padding: env(safe-area-inset-top) env(safe-area-inset-right)
+               env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:16px 12px 26px}
+    header{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:14px; margin:10px 0 14px;
+    }
+    .brand{display:flex; flex-direction:column; gap:2px}
+    .title{
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:16px;
+      color:var(--gold-1);
+      text-shadow: 0 1px 0 rgba(0,0,0,.6);
+    }
+    .subtitle{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.02em;
+    }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.25));
+      border:1px solid var(--stroke);
+      box-shadow: var(--shadow2);
+      user-select:none;
+    }
+    .chip .dot{
+      width:12px; height:12px; border-radius:999px;
+      background: radial-gradient(circle at 35% 30%, #fff, rgba(255,255,255,.4) 30%, rgba(0,0,0,.25) 60%, rgba(0,0,0,.5));
+      border:1px solid rgba(255,255,255,.25);
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.22));
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .topbar{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      padding: var(--pad2);
+    }
+
+    .controls{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;
+    }
+
+    .field{
+      display:flex; flex-direction:column; gap:6px; min-width:160px;
+    }
+    .label{font-size:12px; color:var(--muted)}
+    input[type="number"], input[type="text"], select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.24);
+      color:var(--ink);
+      outline:none;
+    }
+    input::placeholder{color:rgba(238,245,239,.45)}
+
+    .btn{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.25));
+      color:var(--ink);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.01em;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+      user-select:none;
+      touch-action: manipulation;
+      white-space:nowrap;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.danger{
+      border-color: rgba(255,90,95,.35);
+      background: linear-gradient(180deg, rgba(255,90,95,.14), rgba(0,0,0,.26));
+    }
+    .btn.gold{
+      border-color: rgba(208,173,82,.45);
+      background: linear-gradient(180deg, rgba(255,242,191,.18), rgba(0,0,0,.26));
+      color: var(--gold-1);
+      text-shadow: 0 1px 0 rgba(0,0,0,.7);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .players{padding: var(--pad2)}
+    .playersHead{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; margin-bottom:12px;
+    }
+    .playersHead .h{
+      font-weight:900; letter-spacing:.06em; text-transform:uppercase; font-size:12px; color:var(--muted);
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+
+    @media (max-width: 840px){
+      .grid{grid-template-columns: 1fr}
+      .cards{grid-template-columns: 1fr}
+      header{align-items:flex-start; flex-direction:column}
+    }
+
+    .playerCard{
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.22));
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .playerCard::before{
+      content:"";
+      position:absolute; inset:-40px -40px auto auto;
+      width:160px; height:160px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,242,191,.22), transparent 60%);
+      transform: rotate(10deg);
+      pointer-events:none;
+    }
+
+    .pcTop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px}
+    .pname{display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.02em; font-size:14px}
+    .badge{
+      width:12px; height:12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.28);
+      box-shadow: 0 0 0 3px rgba(0,0,0,.18);
+      flex:0 0 auto;
+    }
+
+    .score{
+      font-size:34px; font-weight:950; letter-spacing:.02em; line-height:1;
+      text-align:right; text-shadow: 0 2px 0 rgba(0,0,0,.65);
+    }
+    .goalHint{font-size:12px; color:var(--muted); text-align:right; margin-top:4px}
+
+    .pcBtns{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap}
+    .pcBtns .btn{flex: 1 1 160px}
+
+    .winner{
+      outline: 2px solid rgba(110,231,168,.45);
+      box-shadow: 0 0 0 4px rgba(110,231,168,.14), var(--shadow);
+    }
+    .winnerTag{
+      position:absolute; top:12px; right:12px;
+      font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+      color: rgba(110,231,168,.95);
+      border:1px solid rgba(110,231,168,.35);
+      background: rgba(0,0,0,.22);
+      padding:6px 10px; border-radius:999px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .side{padding: var(--pad2); display:flex; flex-direction:column; gap:12px}
+    .side h3{margin:0; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+    .log{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      border-radius: 14px;
+      padding:10px;
+      max-height: 380px;
+      overflow:auto;
+    }
+    .logItem{
+      display:flex; justify-content:space-between; gap:10px;
+      padding:10px 8px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:12px;
+    }
+    .logItem:last-child{border-bottom:none}
+    .logLeft{display:flex; flex-direction:column; gap:2px}
+    .logMeta{color:var(--muted); font-size:11px}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: calc(env(safe-area-inset-bottom) + 18px);
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.72);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      font-size: 12px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      max-width: min(680px, calc(100vw - 24px));
+      text-align:center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 9999;
+    }
+    .toast.show{opacity:1}
+    .small{font-size:11px;color:var(--muted)}
+
+    /* Modal */
+    .modalBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:none;
+      z-index: 9998;
+      padding: 18px;
+      padding-top: calc(env(safe-area-inset-top) + 18px);
+      padding-bottom: calc(env(safe-area-inset-bottom) + 18px);
+    }
+    .modalBack.show{display:flex; align-items:center; justify-content:center}
+    .modal{
+      width: min(680px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.35));
+      box-shadow: 0 20px 60px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding: 14px 14px 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .modalTitle{
+      font-weight:900; letter-spacing:.06em; text-transform:uppercase; font-size:12px; color: var(--gold-1);
+    }
+    .modalBody{padding: 14px}
+    .nameRow{
+      display:flex; gap:10px; align-items:center;
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nameRow:last-child{border-bottom:none}
+    .nameRow .idx{width:28px; color: var(--muted); font-size:12px; font-weight:800}
+    .modalFoot{
+      padding: 12px 14px;
+      display:flex; gap:10px; justify-content:flex-end;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="title">THE GOLDEN LINE</div>
+        <div class="subtitle">Punkte-Tracker (2–6 Spieler • Zielpunkte einstellbar • Poker-Stil)</div>
+      </div>
+      <div class="chip" title="Speichert lokal auf diesem Gerät">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="statusText">Bereit</span>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="topbar">
+        <div class="controls">
+          <div class="field">
+            <div class="label">Zielpunkte</div>
+            <input id="goal" type="number" min="1" max="99" value="5" inputmode="numeric" />
+          </div>
+
+          <div class="field">
+            <div class="label">Anzahl Spieler</div>
+            <select id="playerCount">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4" selected>4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div>
+
+          <button class="btn" id="addPlayerBtn" title="Erhöht die Spieleranzahl um 1 (max. 6)">Spieler hinzufügen</button>
+          <button class="btn gold" id="editNamesBtn" title="Spielernamen in einer Liste eintragen">Spielername hinzufügen</button>
+          <button class="btn" id="undoBtn">Undo</button>
+          <button class="btn danger" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="small">Tipp: Für Namen nutze „Spielername hinzufügen“ (iOS-sicher, ohne Popups).</div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="panel players">
+        <div class="playersHead">
+          <div class="h">Spielstand</div>
+          <div class="small">Normal +1 • Golden +2</div>
+        </div>
+        <div class="cards" id="cards"></div>
+      </section>
+
+      <aside class="panel side">
+        <h3>Verlauf</h3>
+        <div class="log" id="log"></div>
+
+        <div>
+          <h3 style="margin-bottom:8px;">Export</h3>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" id="copyBtn">Verlauf kopieren</button>
+            <button class="btn gold" id="shareBtn">Teilen</button>
+          </div>
+          <div class="small" style="margin-top:8px;">
+            Hinweis: Speichert lokal. Für mehrere Geräte: Datei auf einen Webspace legen.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Modal for names -->
+  <div class="modalBack" id="nameModalBack" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
+      <div class="modalHead">
+        <div class="modalTitle" id="nameModalTitle">Spielernamen</div>
+        <button class="btn danger" id="closeNamesBtn" type="button">Schließen</button>
+      </div>
+      <div class="modalBody" id="nameModalBody"></div>
+      <div class="modalFoot">
+        <button class="btn" id="saveNamesBtn" type="button">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const DEFAULTS = {
+    goal: 5,
+    playerCount: 4,
+    players: [
+      { name: "Spieler 1", color: "#e11d48" },
+      { name: "Spieler 2", color: "#3b82f6" },
+      { name: "Spieler 3", color: "#22c55e" },
+      { name: "Spieler 4", color: "#f59e0b" },
+      { name: "Spieler 5", color: "#a855f7" },
+      { name: "Spieler 6", color: "#06b6d4" }
+    ],
+    scores: [0,0,0,0,0,0],
+    log: [],
+    history: []
+  };
+
+  const STORAGE_KEY = "goldenline_tracker_v4_buttons";
+
+  let state = load() ?? structuredClone(DEFAULTS);
+
+  const $ = (id) => document.getElementById(id);
+  const cardsEl = $("cards");
+  const logEl = $("log");
+  const goalEl = $("goal");
+  const countEl = $("playerCount");
+  const statusText = $("statusText");
+  const toastEl = $("toast");
+
+  const modalBack = $("nameModalBack");
+  const modalBody = $("nameModalBody");
+
+  function nowStamp(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    return `${hh}:${mm}`;
+  }
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastEl._t);
+    toastEl._t = setTimeout(() => toastEl.classList.remove("show"), 1700);
+  }
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[m]);
+  }
+
+  function save(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      statusText.textContent = "Gespeichert";
+      clearTimeout(save._t);
+      save._t = setTimeout(() => statusText.textContent = navigator.onLine ? "Bereit" : "Offline", 900);
+    }catch(e){
+      statusText.textContent = "Speichern fehlgeschlagen";
+      toast("Konnte nicht speichern (Private Mode?)");
+    }
+  }
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch(e){ return null; }
+  }
+
+  function setGoal(n){
+    state.goal = clamp(Number(n)||DEFAULTS.goal, 1, 99);
+    save(); render();
+    toast(`Ziel: ${state.goal}`);
+  }
+
+  function setPlayerCount(n){
+    state.playerCount = clamp(Number(n)||2, 2, 6);
+    if(!Array.isArray(state.scores) || state.scores.length < 6) state.scores = [0,0,0,0,0,0];
+    if(!Array.isArray(state.players) || state.players.length < 6) state.players = structuredClone(DEFAULTS.players);
+    countEl.value = String(state.playerCount);
+    save(); render();
+  }
+
+  function addPlayer(){
+    if(state.playerCount >= 6){ toast("Maximal 6 Spieler"); return; }
+    setPlayerCount(state.playerCount + 1);
+    toast(`Spieler: ${state.playerCount}`);
+  }
+
+  function resetAll(){
+    const keep = { players: state.players, playerCount: state.playerCount, goal: state.goal };
+    state = structuredClone(DEFAULTS);
+    state.players = keep.players;
+    state.playerCount = keep.playerCount;
+    state.goal = keep.goal;
+    state.scores = [0,0,0,0,0,0];
+    state.log = [];
+    state.history = [];
+    save(); render();
+    toast("Neues Spiel gestartet");
+  }
+
+  function addAction(playerIdx, delta, kind){
+    const before = state.scores[playerIdx] ?? 0;
+    const after = before + delta;
+    state.scores[playerIdx] = after;
+
+    const entry = {
+      t: nowStamp(),
+      p: playerIdx,
+      name: state.players[playerIdx]?.name ?? `Spieler ${playerIdx+1}`,
+      delta,
+      kind
+    };
+    state.log.unshift(entry);
+    state.history.push({ type:"score", p:playerIdx, delta });
+
+    save(); render();
+
+    if(after >= state.goal) toast(`${entry.name} erreicht ${after} Punkte`);
+    else toast(`${entry.name}: +${delta}`);
+  }
+
+  function undo(){
+    const last = state.history.pop();
+    if(!last){ toast("Nichts zum Rückgängig machen"); return; }
+    if(last.type === "score"){
+      state.scores[last.p] = (state.scores[last.p] ?? 0) - last.delta;
+      const idx = state.log.findIndex(e => e.p === last.p && e.delta === last.delta);
+      if(idx >= 0) state.log.splice(idx,1);
+    }
+    save(); render();
+    toast("Undo");
+  }
+
+  function render(){
+    goalEl.value = String(state.goal ?? DEFAULTS.goal);
+    countEl.value = String(state.playerCount ?? DEFAULTS.playerCount);
+
+    const goal = Number(state.goal || DEFAULTS.goal);
+    const n = Number(state.playerCount || 4);
+    const scores = state.scores ?? [0,0,0,0,0,0];
+
+    const winners = [];
+    for(let i=0;i<n;i++){
+      if((scores[i] ?? 0) >= goal) winners.push(i);
+    }
+
+    cardsEl.innerHTML = "";
+    for(let i=0;i<n;i++){
+      const p = state.players[i] || { name:`Spieler ${i+1}`, color:"#9ca3af" };
+      const s = scores[i] ?? 0;
+
+      const card = document.createElement("div");
+      card.className = "playerCard" + (winners.includes(i) ? " winner" : "");
+      const badgeStyle = `background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.95), ${p.color} 35%, rgba(0,0,0,.35) 75%)`;
+
+      card.innerHTML = `
+        ${winners.includes(i) ? `<div class="winnerTag">LEADER</div>` : ``}
+        <div class="pcTop">
+          <div class="pname">
+            <span class="badge" style="${badgeStyle}"></span>
+            <span>${escapeHtml(p.name)}</span>
+          </div>
+          <div>
+            <div class="score">${s}</div>
+            <div class="goalHint">Ziel: ${goal}</div>
+          </div>
+        </div>
+        <div class="pcBtns">
+          <button class="btn" data-a="normal" data-i="${i}">Normal Line +1</button>
+          <button class="btn gold" data-a="gold" data-i="${i}">Golden Line +2</button>
+        </div>
+      `;
+
+      card.querySelectorAll("button[data-a]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const kind = btn.getAttribute("data-a");
+          if(kind === "normal") addAction(i, 1, "normal");
+          else addAction(i, 2, "gold");
+        });
+      });
+
+      cardsEl.appendChild(card);
+    }
+
+    logEl.innerHTML = "";
+    if(!state.log || state.log.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "small";
+      empty.style.padding = "8px 6px";
+      empty.textContent = "Noch keine Aktionen. Nutze die Buttons bei den Spielern.";
+      logEl.appendChild(empty);
+    } else {
+      state.log.slice(0, 120).forEach((e) => {
+        const item = document.createElement("div");
+        item.className = "logItem";
+        const p = state.players[e.p] || {};
+        const dot = `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:${p.color || '#9ca3af'};margin-right:8px;"></span>`;
+        const kindLabel = e.kind === "gold" ? "Golden Line" : "Normal Line";
+        item.innerHTML = `
+          <div class="logLeft">
+            <div>${dot}<strong>${escapeHtml(e.name)}</strong> – ${kindLabel}</div>
+            <div class="logMeta">${e.t}</div>
+          </div>
+          <div style="font-weight:900; color:${e.kind==='gold' ? 'var(--gold-1)' : 'var(--ink)'}">+${e.delta}</div>
+        `;
+        logEl.appendChild(item);
+      });
+    }
+
+    statusText.textContent = navigator.onLine ? "Bereit" : "Offline";
+  }
+
+  function buildShareText(){
+    const n = Number(state.playerCount || 4);
+    const goal = Number(state.goal || 5);
+    const lines = [];
+    lines.push(`THE GOLDEN LINE – Punkte`);
+    lines.push(`Ziel: ${goal}`);
+    lines.push("");
+    for(let i=0;i<n;i++){
+      const name = state.players[i]?.name ?? `Spieler ${i+1}`;
+      const s = state.scores[i] ?? 0;
+      lines.push(`${name}: ${s}`);
+    }
+    lines.push("");
+    lines.push("Verlauf (neu → alt):");
+    (state.log || []).slice(0, 20).forEach(e => {
+      const kind = e.kind === "gold" ? "Golden" : "Normal";
+      lines.push(`${e.t} – ${e.name} +${e.delta} (${kind})`);
+    });
+    return lines.join("\n");
+  }
+
+  // Modal for names
+  function openNamesModal(){
+    const n = Number(state.playerCount || 4);
+    modalBody.innerHTML = "";
+    for(let i=0;i<n;i++){
+      const row = document.createElement("div");
+      row.className = "nameRow";
+      const p = state.players[i] || { name:`Spieler ${i+1}`, color:"#9ca3af" };
+      row.innerHTML = `
+        <div class="idx">${i+1}.</div>
+        <input type="text" inputmode="text" autocomplete="off" spellcheck="false"
+          data-i="${i}"
+          value="${escapeHtml(p.name)}"
+          placeholder="Name"
+        />
+      `;
+      // Give the input same styling
+      const inp = row.querySelector("input");
+      inp.style.flex = "1 1 auto";
+      inp.style.padding = "10px 10px";
+      inp.style.borderRadius = "12px";
+      inp.style.border = "1px solid rgba(255,255,255,.10)";
+      inp.style.background = "rgba(0,0,0,.24)";
+      inp.style.color = "var(--ink)";
+      modalBody.appendChild(row);
+    }
+
+    modalBack.classList.add("show");
+    modalBack.setAttribute("aria-hidden", "false");
+    // Focus first input
+    const first = modalBody.querySelector("input");
+    if(first){ setTimeout(() => first.focus(), 50); }
+  }
+
+  function closeNamesModal(){
+    modalBack.classList.remove("show");
+    modalBack.setAttribute("aria-hidden", "true");
+  }
+
+  function saveNamesFromModal(){
+    const inputs = modalBody.querySelectorAll("input[data-i]");
+    inputs.forEach(inp => {
+      const i = Number(inp.getAttribute("data-i"));
+      const val = inp.value.trim();
+      const fallback = `Spieler ${i+1}`;
+      state.players[i].name = val.length ? val : (state.players[i].name || fallback);
+    });
+    save(); render();
+    closeNamesModal();
+    toast("Namen gespeichert");
+  }
+
+  // Controls
+  $("addPlayerBtn").addEventListener("click", addPlayer);
+  $("editNamesBtn").addEventListener("click", openNamesModal);
+
+  goalEl.addEventListener("change", () => setGoal(goalEl.value));
+  countEl.addEventListener("change", () => { setPlayerCount(countEl.value); toast(`Spieler: ${state.playerCount}`); });
+
+  $("undoBtn").addEventListener("click", undo);
+  $("resetBtn").addEventListener("click", () => {
+    if(confirm("Neues Spiel starten? Punkte & Verlauf werden gelöscht.")) resetAll();
+  });
+
+  $("copyBtn").addEventListener("click", async () => {
+    const txt = buildShareText();
+    try{
+      await navigator.clipboard.writeText(txt);
+      toast("Verlauf kopiert");
+    }catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = txt;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      toast("Verlauf kopiert");
+    }
+  });
+
+  $("shareBtn").addEventListener("click", async () => {
+    const txt = buildShareText();
+    if(navigator.share){
+      try{
+        await navigator.share({ title: "THE GOLDEN LINE", text: txt });
+        toast("Geteilt");
+      }catch(e){ toast("Teilen abgebrochen"); }
+    } else {
+      try{ await navigator.clipboard.writeText(txt); toast("Teilen nicht verfügbar – Text kopiert"); }
+      catch(e){ toast("Teilen nicht verfügbar"); }
+    }
+  });
+
+  $("closeNamesBtn").addEventListener("click", closeNamesModal);
+  $("saveNamesBtn").addEventListener("click", saveNamesFromModal);
+
+  // Close modal when tapping backdrop (outside modal)
+  modalBack.addEventListener("click", (e) => {
+    if(e.target === modalBack) closeNamesModal();
+  });
+
+  window.addEventListener("online", () => { statusText.textContent = "Bereit"; });
+  window.addEventListener("offline", () => { statusText.textContent = "Offline"; });
+
+  // Init
+  setPlayerCount(state.playerCount || DEFAULTS.playerCount);
+  setGoal(state.goal || DEFAULTS.goal);
+  render();
+  save();
+})();</script>
+</body>
+</html>
